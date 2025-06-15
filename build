@@ -42,3 +42,5 @@ greeting
 clone
 make
 done_msg
+
+exit 0
