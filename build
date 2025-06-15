@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# IosevkaDusk build script
+
+patch="private-build-plans.toml"
+
+greeting(){
+  echo "Welcome to IosevkaDusk build script, $USER!"  
+  echo "Make sure you have installed the following packages in your system: nodejs, npm, ttfautohint, zip."  
+  sleep 3
+}
+
+# Clone Iosevka source code
+clone(){
+  if [ -d "Iosevka" ]; then
+    git -C ./Iosevka pull
+  else
+    git clone https://github.com/be5invis/Iosevka
+  fi
+}
+
+# Make Pragmatasevka
+make(){
+  [ -f ./Iosevka/$patch ] && rm -rf ./Iosevka/$patch
+  cp $patch ./Iosevka
+  cd Iosevka
+  npm install
+  npm run build -- contents::IosevkaDusk
+  cd ..
+  rm -rf ./IosevkaDusk-ttf.zip
+  rm -rf ./IosevkaDusk-woff2.zip
+  zip -jr IosevkaDusk-ttf.zip ./Iosevka/dist/IosevkaDusk/TTF
+  zip -jr IosevkaDusk-woff2.zip ./Iosevka/dist/IosevkaDusk/WOFF2
+  rm -rf ./Iosevka/dist
+}
+
+# Print done
+done_msg(){
+  echo "IosevkaDusk has been built!"
+}
+
+greeting
+clone
+make
+done_msg
